@@ -10,16 +10,17 @@ DAGSHUB_REPO_NAME = "Workflow-CI"
 DATA_PATH = 'mushroom_preprocessing/mushroom_clean.csv'
 
 def main():
-    # Setup DagsHub
-    dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=DAGSHUB_REPO_NAME, mlflow=True)
-    mlflow.set_experiment("Mushroom_Classification_CI") 
 
-    # Load Data
-    print("Loading data...")
+    try:
+        dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=DAGSHUB_REPO_NAME, mlflow=True)
+    except:
+        pass 
+
+    print(f"Loading data from {DATA_PATH}...")
     try:
         df = pd.read_csv(DATA_PATH)
     except FileNotFoundError:
-        print("File tidak ditemukan.")
+        print(f"ERROR: File tidak ditemukan di {DATA_PATH}")
         return
 
     X = df.drop('class', axis=1)
@@ -28,14 +29,14 @@ def main():
 
     mlflow.autolog()
 
-    with mlflow.start_run(run_name="CI_Automated_Run"):
+    with mlflow.start_run(): 
         print("Training Model...")
         model = RandomForestClassifier(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
         
         predictions = model.predict(X_test)
         acc = accuracy_score(y_test, predictions)
-        print(f" Run Selesai. Accuracy: {acc}")
+        print(f"Run Selesai. Accuracy: {acc}")
 
 if __name__ == "__main__":
     main()
