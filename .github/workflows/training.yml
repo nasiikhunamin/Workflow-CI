@@ -47,7 +47,7 @@ jobs:
           IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/mushroom-modell:latest
 
           mlflow models build-docker \
-            --model-uri "models:/Mushroom_Modell@latest" \
+            --model-uri "models:/Mushroom_Modell@Latest" \
             --name $IMAGE_NAME
 
           docker tag $IMAGE_NAME:latest $IMAGE_TAG
