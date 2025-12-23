@@ -6,13 +6,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 DAGSHUB_USERNAME = "nasikhunamin815"
-DAGSHUB_REPO_NAME = "Eksperimen_SML_Nasikhun-Amin"
+DAGSHUB_REPO_NAME = "Workflow-CI"
 DATA_PATH = 'mushroom_preprocessing/mushroom_clean.csv'
 
 def main():
     # Setup DagsHub
     dagshub.init(repo_owner=DAGSHUB_USERNAME, repo_name=DAGSHUB_REPO_NAME, mlflow=True)
-    mlflow.set_experiment("Mushroom_Classification_Basic") 
+    mlflow.set_experiment("Mushroom_Classification_CI") 
 
     # Load Data
     print("Loading data...")
@@ -28,7 +28,7 @@ def main():
 
     mlflow.autolog()
 
-    with mlflow.start_run(run_name="Basic_Single_Run"):
+    with mlflow.start_run(run_name="CI_Automated_Run"):
         print("Training Model...")
         model = RandomForestClassifier(n_estimators=100, random_state=42)
         model.fit(X_train, y_train)
