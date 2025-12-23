@@ -8,6 +8,12 @@ on:
 jobs:
   training:
     runs-on: ubuntu-latest
+    env:
+      MLFLOW_TRACKING_URI: https://dagshub.com/nasikhunamin815/Workflow-CI.mlflow
+      MLFLOW_TRACKING_USERNAME: ${{ secrets.USERNAME }}
+      MLFLOW_TRACKING_PASSWORD: ${{ secrets.TOKEN }}
+      DAGSHUB_USER_TOKEN: ${{ secrets.TOKEN }}
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -21,11 +27,6 @@ jobs:
         run: pip install mlflow dagshub pandas scikit-learn matplotlib seaborn virtualenv
 
       - name: Train Model with MLflow
-        env:
-          MLFLOW_TRACKING_USERNAME: ${{ secrets.USERNAME }}
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.TOKEN }} 
-          DAGSHUB_USER_TOKEN: ${{ secrets.TOKEN }}
-          MLFLOW_TRACKING_URI: https://dagshub.com/nasikhunamin815/Workflow-CI.mlflow
         run: |
           mlflow run MLProject --env-manager=local --experiment-name Mushroom_Classification_CI
 
@@ -45,14 +46,12 @@ jobs:
         run: |
           IMAGE_NAME=mushroom-model
           IMAGE_TAG=${{ secrets.DOCKER_USERNAME }}/mushroom-modell:latest
-
+          
           mlflow models build-docker \
-            --model-uri "models:/Mushroom_Model/1" \
+            --model-uri "models:/Mushroom_Model/Latest" \
             --name $IMAGE_NAME
 
           docker tag $IMAGE_NAME:latest $IMAGE_TAG
 
       - name: Push Docker Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/mushroom-modell:latest
-
-
