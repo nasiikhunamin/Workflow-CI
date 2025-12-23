@@ -1,0 +1,28 @@
+name: MLflow Project Training CI
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  training:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install MLflow & Dependencies
+        run: pip install mlflow dagshub pandas scikit-learn
+
+      - name: Run MLflow Project
+        env:
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.TOKEN }} 
+        run: |
+          mlflow run MLProject --no-conda --env-manager=local
