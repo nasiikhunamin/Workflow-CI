@@ -38,5 +38,12 @@ def main():
         acc = accuracy_score(y_test, predictions)
         print(f"Run Selesai. Accuracy: {acc}")
 
+        print("Registering Model...")
+        mlflow.sklearn.log_model(
+            sk_model=model, 
+            artifact_path="model", 
+            registered_model_name="Mushroom_Model" 
+        )
+
 if __name__ == "__main__":
     main()
